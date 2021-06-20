@@ -16,7 +16,12 @@ public class User {
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
-//    private List<Loan> loansList;
+    @OneToMany(
+            mappedBy = "cash_user",
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
+    private List<Loan> loanList;
 
 
     public User() {
