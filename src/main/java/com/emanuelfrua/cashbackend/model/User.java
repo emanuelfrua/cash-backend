@@ -19,7 +19,8 @@ public class User {
     private String lastName;
     @OneToMany(
             cascade = {CascadeType.ALL},
-            mappedBy = "cash_user"
+            mappedBy = "cash_user",
+            orphanRemoval = true
     )
     private List<Loan> loanList;
 
