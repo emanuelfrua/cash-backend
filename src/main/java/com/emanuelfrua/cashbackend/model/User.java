@@ -2,6 +2,7 @@ package com.emanuelfrua.cashbackend.model;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "cash_user")
@@ -17,9 +18,8 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
     @OneToMany(
-            mappedBy = "cash_user",
             cascade = {CascadeType.ALL},
-            orphanRemoval = true
+            mappedBy = "cash_user"
     )
     private List<Loan> loanList;
 
@@ -63,5 +63,13 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public List<Loan> getLoanList() {
+        return loanList;
+    }
+
+    public void setLoanList(List<Loan> loanList) {
+        this.loanList = loanList;
     }
 }

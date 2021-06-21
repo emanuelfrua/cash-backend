@@ -1,8 +1,8 @@
 package com.emanuelfrua.cashbackend.controller;
 
+import com.emanuelfrua.cashbackend.dto.LoanDTO;
 import com.emanuelfrua.cashbackend.exception.ResourceNotFoundException;
 import com.emanuelfrua.cashbackend.model.Loan;
-import com.emanuelfrua.cashbackend.model.User;
 import com.emanuelfrua.cashbackend.repository.LoanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -22,50 +21,48 @@ public class LoanController {
 
     @Autowired
     private LoanRepository loanRepository;
-//
-//    // get all Loans
-//    @GetMapping("/loans")
-//    public List<Loan> getAllLoans() {
-//        return this.loanRepository.findAll();
-//    }
 
-    // get loans by page and size
+    // get loans by page and size, user_id is optional
     @GetMapping("/loans")
-    public Pageable getLoansByPageAndSize(
+    public Page<LoanDTO> getLoansByPageAndSize(
             @RequestParam(required = true, value = "page") int page,
             @RequestParam(required = true, value = "size") int size,
             @RequestParam(required = false, value = "user_id") Long userId
     ) {
-        Pageable pageObj = PageRequest.of(page, size);
-        Page<Loan> loanPage = this.loanRepository.findAll(pageObj);
-        return pageObj;
+        Page<LoanDTO> loanDTOPage = null;
+        Pageable pageable = PageRequest.of(page, size);
 
+        if (userId != null) {
+            loanDTOPage = this.loanRepository.findByUserId(userId, pageable).map(LoanDTO::new);
+        } else {
+            loanDTOPage = this.loanRepository.findAll(pageable).map(LoanDTO::new);
+        }
+//        return new LoanResponseDTO(loanDTOPage.getContent(), pageable);
+        return loanDTOPage;
     }
 
-//    // save user
-//    @PostMapping("users")
-//    public User createUser(@Valid @RequestBody User user) {
-//        return this.userRepository.save(user);
-//    }
-//
-//    // update user
-//    @PutMapping("users/{id}")
-//    public ResponseEntity<User> updateUser(@PathVariable(value = "id") Long userId, @Valid @RequestBody User userDetails) throws ResourceNotFoundException {
-//        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found for this id: " + userId));
-//        user.setEmail(userDetails.getEmail());
-//        user.setFirstName(userDetails.getFirstName());
-//        user.setLastName(userDetails.getLastName());
-//        final User userUpdated = userRepository.save(user);
-//        return ResponseEntity.ok(userUpdated);
-//    }
-//
-//    // delete user
-//    @DeleteMapping("users/{id}")
-//    public Map<String, Boolean> deleteUser(@PathVariable(value = "id") Long userId) throws ResourceNotFoundException {
-//        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found for this id: " + userId));
-//        this.userRepository.delete(user);
-//        Map<String, Boolean> response = new HashMap<>();
-//        response.put("deleted", Boolean.TRUE);
-//        return response;
-//    }
+    // save Loan
+    @PostMapping("loans")
+    public Loan createLoan(@Valid @RequestBody Loan loan) {
+        return this.loanRepository.save(loan);
+    }
+
+    // update Loan
+    @PutMapping("loans/{id}")
+    public ResponseEntity<Loan> updateLoan(@PathVariable(value = "id") Long loanId, @Valid @RequestBody Loan loanDetails) throws ResourceNotFoundException {
+        Loan loan = loanRepository.findById(loanId).orElseThrow(() -> new ResourceNotFoundException("Loan not found for this id: " + loanId));
+        loan.setTotal(loanDetails.getTotal());
+        final Loan loanUpdated = loanRepository.save(loan);
+        return ResponseEntity.ok(loanUpdated);
+    }
+
+    // delete loan
+    @DeleteMapping("loans/{id}")
+    public Map<String, Boolean> deleteLoan(@PathVariable(value = "id") Long loanId) throws ResourceNotFoundException {
+        Loan loan = loanRepository.findById(loanId).orElseThrow(() -> new ResourceNotFoundException("Loan not found for this id: " + loanId));
+        this.loanRepository.delete(loan);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("deleted", Boolean.TRUE);
+        return response;
+    }
 }

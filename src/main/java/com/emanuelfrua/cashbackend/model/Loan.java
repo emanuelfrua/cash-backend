@@ -14,8 +14,8 @@ public class Loan {
     @Column(name = "total", precision = 10, scale = 2)
     private double total;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "cash_user_id")
+    @ManyToOne
+    @JoinColumn(nullable = false, name = "cash_user_id")
     private User cash_user;
 
     public Loan() {
@@ -48,5 +48,14 @@ public class Loan {
 
     public void setCash_user(User cash_user) {
         this.cash_user = cash_user;
+    }
+
+    @Override
+    public String toString() {
+        return "Loan{" +
+                "id=" + id +
+                ", total=" + total +
+                ", userId=" + cash_user.getId() +
+                '}';
     }
 }
