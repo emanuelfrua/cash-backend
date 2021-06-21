@@ -1,8 +1,7 @@
 #### Main Dependencies:
 - Spring web
-- PostreSQL Driver
+- PostgreSQL Driver
 - Spring Data JPA
-
 
 #### Testing:
 - JUnit
@@ -11,6 +10,6 @@
 Clonar este repositorio, ejecutar "mvn clean install" para descargar dependencias.
 
 #### application.properties:
-Configurar la base de datos para uso local usando PostreSQL o externo con Heroku.
+Configurar la base de datos para uso local usando PostgreSQL o externo con Heroku.
 
 
